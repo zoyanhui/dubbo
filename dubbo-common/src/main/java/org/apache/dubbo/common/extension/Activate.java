@@ -42,6 +42,11 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+/**
+ * zyh:
+ * 用来实现扩展点的自动激活，简化配置。
+ * doc: http://dubbo.apache.org/zh-cn/docs/dev/SPI.html
+ */
 public @interface Activate {
     /**
      * Activate the current extension when one of the groups matches. The group passed into

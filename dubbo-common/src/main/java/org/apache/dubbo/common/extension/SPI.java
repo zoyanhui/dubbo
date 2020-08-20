@@ -54,6 +54,13 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
+/**
+ * zyh:
+ * 作为dubbo实现java SPI扩展的重要注解之一，其他注解是{@link Adaptive} 和 {@link Activate}
+ * SPI用来指明某个接口是可扩展接口。同时 default value指明为默认的SPI配置实现
+ *
+ * doc: http://dubbo.apache.org/zh-cn/docs/dev/SPI.html
+  */
 public @interface SPI {
 
     /**

@@ -85,27 +85,45 @@ public class ExtensionLoader<T> {
 
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
 
+    //zyh: 扩展加载器集合，key为扩展接口，例如Protocol等
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(64);
 
+    //zyh: 扩展实现类集合，key为扩展实现类，value为扩展对象，例如key为DubboProtocol Class，value为DubboProtocol对象
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
 
     private final Class<?> type;
 
     private final ExtensionFactory objectFactory;
+    //zyh: cached字段都是为了性能和资源优化，对读取的配置所做的缓存，在真正需要用到某个扩展的实现时，才初始化。
 
+    //zyh: 缓存的扩展名与扩展类映射，和cachedClasses的key和value对换. 其中扩展名是指配置文件中的key，比如"dubbo"
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
 
+    //zyh:缓存的扩展实现类集合，扩展名和扩展类的映射
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
+    //zyh: 扩展名与加有@Activate的自动激活类的映射
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>();
+
+    //zyh: 缓存的扩展名和扩展对的映射，key为扩展名，value为扩展类的对象。例如Protocol扩展，key为dubbo，value为DubboProtocol的实例
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
+
+    //zyh: 自适应（adaptive）扩展对象的缓存，例如AdaptiveExtensionFactory类的对象
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
+
+    //zyh: 自适应（adaptive）扩展类的缓存，例如类AdaptiveExtensionFactory
     private volatile Class<?> cachedAdaptiveClass = null;
+
+    //缓存的默认扩展名，就是@SPI中设置的值
     private String cachedDefaultName;
+
+    //创建cachedAdaptiveInstance异常
     private volatile Throwable createAdaptiveInstanceError;
 
+    //拓展Wrapper实现类集合
     private Set<Class<?>> cachedWrapperClasses;
 
+    //拓展名与加载对应拓展类发生的异常的映射
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>();
 
     private static volatile LoadingStrategy[] strategies = loadLoadingStrategies();
@@ -151,17 +169,20 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
+        // 扩展点接口为null判断
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
         }
+        // 扩展点不是接口会抛异常
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Extension type (" + type + ") is not an interface!");
         }
+        // 判断是否为可扩展接口
         if (!withExtensionAnnotation(type)) {
             throw new IllegalArgumentException("Extension type (" + type +
                     ") is not an extension, because it is NOT annotated with @" + SPI.class.getSimpleName() + "!");
         }
-
+        // 从扩展器集合中获取，如果为空则创建一个并添加到集合
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         if (loader == null) {
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
@@ -211,6 +232,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
+     * zyh: 获取符合自动激活条件的扩展实现类集合
      * This is equivalent to {@code getActivateExtension(url, key, null)}
      *
      * @param url url
@@ -249,6 +271,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
+     * zyh: 获取符合自动激活条件的扩展实现类集合
      * Get activate extensions.
      *
      * @param url    url

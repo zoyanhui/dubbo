@@ -33,6 +33,14 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+/**
+ * zyh:
+ * 与{@link SPI}一样为扩展实现的标注. 用来实现自适应扩展点。
+ * doc: http://dubbo.apache.org/zh-cn/docs/dev/SPI.html
+ *
+ * 1. 在实现类上使用，指明该实现类为该接口的适配器
+ * 2. 接口方法上使用，dubbo会动态生成适配器类
+ */
 public @interface Adaptive {
     /**
      * Decide which target extension to be injected. The name of the target extension is decided by the parameter passed

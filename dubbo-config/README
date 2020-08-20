@@ -1,0 +1,5 @@
+配置模块
+用户通过配置使用dubbo，配置方式的实现
+
+dubbo-config-api：实现了API配置和属性配置的功能。
+dubbo-config-spring：实现了XML配置和注解配置的功能。

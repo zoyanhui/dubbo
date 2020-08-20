@@ -1,0 +1,2 @@
+公共逻辑模块
+整个项目公共的模型和工具实现。如URL类:org.apache.dubbo.common.URL
