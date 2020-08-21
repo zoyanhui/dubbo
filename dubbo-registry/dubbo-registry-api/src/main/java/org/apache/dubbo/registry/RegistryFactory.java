@@ -21,6 +21,12 @@ import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.common.extension.SPI;
 
 /**
+ * zyh: 注册中心的工厂类，默认是“dubbo”的注册工厂实现:DubboRegistryFactory.(在dubbo-registry-default中配置).
+ * 同时，本接口的{@link #getRegistry(URL)} 方法实现了动态适配，优先从URL中获取url.protocol的值作为实现类.
+ *
+ * 扩展接口实现，可以参见{@link org.apache.dubbo.common.extension.SPI}
+ *
+ *
  * RegistryFactory. (SPI, Singleton, ThreadSafe)
  *
  * @see org.apache.dubbo.registry.support.AbstractRegistryFactory

@@ -43,6 +43,8 @@ import static org.apache.dubbo.registry.Constants.DEFAULT_REGISTRY_RETRY_PERIOD;
 import static org.apache.dubbo.registry.Constants.REGISTRY_RETRY_PERIOD_KEY;
 
 /**
+ * zyh:提供失败重试逻辑的注册实现
+ *
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
  */
 public abstract class FailbackRegistry extends AbstractRegistry {
@@ -237,7 +239,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         removeFailedUnregistered(url);
         try {
             // Sending a registration request to the server side
-            doRegister(url);
+            doRegister(url); //zyh: 真实的注册实现，往注册中心服务端发送
         } catch (Exception e) {
             Throwable t = e;
 

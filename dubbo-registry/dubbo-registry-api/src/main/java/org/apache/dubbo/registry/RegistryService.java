@@ -21,6 +21,8 @@ import org.apache.dubbo.common.URL;
 import java.util.List;
 
 /**
+ * zyh:定义注册中心的抽象接口，注册、取消注册、订阅和取消订阅
+ *
  * RegistryService. (SPI, Prototype, ThreadSafe)
  *
  * @see org.apache.dubbo.registry.Registry
@@ -48,6 +50,7 @@ public interface RegistryService {
      * Unregistering is required to support the contract:<br>
      * 1. If it is the persistent stored data of dynamic=false, the registration data can not be found, then the IllegalStateException is thrown, otherwise it is ignored.<br>
      * 2. Unregister according to the full url match.<br>
+     *     zyh:完整的URL匹配
      *
      * @param url Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      */

@@ -20,6 +20,8 @@ import org.apache.dubbo.common.Node;
 import org.apache.dubbo.common.URL;
 
 /**
+ * zyh: 注册中心的接口。 注册中心也是一种 {@link Node}
+ *
  * Registry. (SPI, Prototype, ThreadSafe)
  *
  * @see org.apache.dubbo.registry.RegistryFactory#getRegistry(URL)

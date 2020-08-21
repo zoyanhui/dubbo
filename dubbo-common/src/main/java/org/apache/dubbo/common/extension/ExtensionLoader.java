@@ -774,6 +774,10 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().get(name);
     }
 
+    /**
+     * zyh:缓存机制 + 延时获取
+     * @return
+     */
     private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) {
@@ -789,6 +793,8 @@ public class ExtensionLoader<T> {
     }
 
     /**
+     * zyh:从配置文件中，加载当前（this对应的扩展接口)扩展点的实现类，实现类的配置策略由strategies提供
+     *
      * synchronized in getExtensionClasses
      */
     private Map<String, Class<?>> loadExtensionClasses() {
@@ -1053,6 +1059,10 @@ public class ExtensionLoader<T> {
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
 
+    /**
+     * zyh:编译生成动态的适配器类.
+     * @return
+     */
     private Class<?> createAdaptiveExtensionClass() {
         String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate();
         ClassLoader classLoader = findClassLoader();

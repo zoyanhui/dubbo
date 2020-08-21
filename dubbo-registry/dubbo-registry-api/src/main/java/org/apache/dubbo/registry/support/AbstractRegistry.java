@@ -78,16 +78,25 @@ public abstract class AbstractRegistry implements Registry {
     private static final int MAX_RETRY_TIMES_SAVE_PROPERTIES = 3;
     // Log output
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    //zyh:开启文件同步时，数据与文件数据同步。并在启动时从文件加载，数据变化时写入文件。
     // Local disk cache, where the special key value.registries records the list of registry centers, and the others are the list of notified service providers
     private final Properties properties = new Properties();
     // File cache timing writing
     private final ExecutorService registryCacheExecutor = Executors.newFixedThreadPool(1, new NamedThreadFactory("DubboSaveRegistryCache", true));
     // Is it synchronized to save the file
     private boolean syncSaveFile;
+    // zyh: 单调递增的 lastCacheChanged, 用来防止旧版覆盖新版
     private final AtomicLong lastCacheChanged = new AtomicLong();
     private final AtomicInteger savePropertiesRetryTimes = new AtomicInteger();
+    //zyh: 已注册的URL。可以使provider，也可以是consumer
     private final Set<URL> registered = new ConcurrentHashSet<>();
+    //zyh: URL的订阅者集合
     private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
+    //zyh: consumer通知集合
+    // <key1, <key2, List>>,
+    //      key1: consumer的URL
+    //      key2: notice category, 如:providers, routes等
+    //      List: 被通知的URL，具体含义跟key2有关
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
     private URL registryUrl;
     // Local disk cache file
@@ -251,9 +260,15 @@ public abstract class AbstractRegistry implements Registry {
         return null;
     }
 
+    /**
+     *
+     * @param url Query condition, is not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
+     * @return
+     */
     @Override
     public List<URL> lookup(URL url) {
         List<URL> result = new ArrayList<>();
+        //zyh: 获取消费者订阅的所有被通知的服务URL集合
         Map<String, List<URL>> notifiedUrls = getNotified().get(url);
         if (CollectionUtils.isNotEmptyMap(notifiedUrls)) {
             for (List<URL> urls : notifiedUrls.values()) {
@@ -333,6 +348,10 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * zyh: 注册中心连接建立时时（断开重连时）执行的恢复注册和订阅的方法
+     * @throws Exception
+     */
     protected void recover() throws Exception {
         // register
         Set<URL> recoverRegistered = new HashSet<>(getRegistered());
