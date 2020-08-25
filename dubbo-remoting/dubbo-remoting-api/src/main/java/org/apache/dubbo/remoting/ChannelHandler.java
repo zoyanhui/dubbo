@@ -20,6 +20,9 @@ import org.apache.dubbo.common.extension.SPI;
 
 
 /**
+ * zyh: 负责对{@link Channel}的逻辑操作。
+ * 声明为SPI接口，提供扩展能力i
+ *
  * ChannelHandler. (API, Prototype, ThreadSafe)
  *
  * @see org.apache.dubbo.remoting.Transporter#bind(org.apache.dubbo.common.URL, ChannelHandler)

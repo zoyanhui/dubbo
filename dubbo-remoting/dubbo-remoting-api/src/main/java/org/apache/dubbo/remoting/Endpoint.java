@@ -21,6 +21,12 @@ import org.apache.dubbo.common.URL;
 import java.net.InetSocketAddress;
 
 /**
+ * zyh:
+ * 通信“端”的接口定义
+ * {@link #getUrl} {@link #getChannelHandler()} {@link #getLocalAddress()}为端本身的属性。
+ * 两个send方法是发送消息，其中第二个方法多了一个sent的参数，为了区分是否是第一次发送消息。
+ * close相关方法，为通道关闭相关操作
+ *
  * Endpoint. (API/SPI, Prototype, ThreadSafe)
  *
  *

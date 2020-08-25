@@ -17,6 +17,10 @@
 
 package org.apache.dubbo.remoting;
 
+/**
+ * zyh: 该接口是可解码的接口，该接口有两个作用，第一个是在调用真正的decode方法实现的时候会有一些校验，判断是否可以解码，并且对解码失败会有一些消息设置；
+ * 第二个是被用来message核对用的。
+ */
 public interface Decodeable {
 
     public void decode() throws Exception;

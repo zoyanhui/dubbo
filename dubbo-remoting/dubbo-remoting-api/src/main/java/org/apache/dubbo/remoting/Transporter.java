@@ -21,6 +21,14 @@ import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.common.extension.SPI;
 
 /**
+ * zyh:
+ * 该接口是网络传输接口，有以下几个注意点：
+ *
+ * 该接口是一个可扩展的接口，并且默认实现NettyTransporter。
+ * 用了dubbo SPI扩展机制中的Adaptive注解，加载对应的bind方法，使用url携带的server或者transporter属性值，加载对应的connect方法，
+ * 使用url携带的client或者transporter属性值
+ *
+ *
  * Transporter. (SPI, Singleton, ThreadSafe)
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Transport_Layer">Transport Layer</a>

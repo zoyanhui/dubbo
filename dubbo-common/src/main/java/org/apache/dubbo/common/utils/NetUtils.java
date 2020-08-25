@@ -465,7 +465,7 @@ public class NetUtils {
     public static void joinMulticastGroup(MulticastSocket multicastSocket, InetAddress multicastAddress) throws
             IOException {
         setInterface(multicastSocket, multicastAddress instanceof Inet6Address);
-        multicastSocket.setLoopbackMode(false);
+        multicastSocket.setLoopbackMode(false); //禁用本地回环
         multicastSocket.joinGroup(multicastAddress);
     }
 

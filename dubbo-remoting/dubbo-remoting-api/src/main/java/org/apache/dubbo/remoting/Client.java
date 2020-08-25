@@ -19,6 +19,10 @@ package org.apache.dubbo.remoting;
 import org.apache.dubbo.common.Resetable;
 
 /**
+ * zyh:
+ * 客户端接口，可以看到它继承了Endpoint、Channel和Resetable接口，继承Endpoint的原因上面我已经提到过了，客户端和服务端其实只是语义上的不同，客户端就是一个点。
+ * 继承Channel是因为客户端跟通道是一一对应的，所以做了这样的设计
+ *
  * Remoting Client. (API/SPI, Prototype, ThreadSafe)
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Client%E2%80%93server_model">Client/Server</a>

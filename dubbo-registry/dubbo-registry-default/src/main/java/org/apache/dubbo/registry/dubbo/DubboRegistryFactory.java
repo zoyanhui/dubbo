@@ -22,6 +22,7 @@ import org.apache.dubbo.common.bytecode.Wrapper;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.registry.Registry;
+import org.apache.dubbo.registry.RegistryFactory;
 import org.apache.dubbo.registry.RegistryService;
 import org.apache.dubbo.registry.integration.RegistryDirectory;
 import org.apache.dubbo.registry.support.AbstractRegistryFactory;
@@ -51,6 +52,9 @@ import static org.apache.dubbo.rpc.cluster.Constants.EXPORT_KEY;
 import static org.apache.dubbo.rpc.cluster.Constants.REFER_KEY;
 
 /**
+ * zyh:注册中心的默认实现（在META-INF.dubbo.internal中指定，与{@link RegistryFactory}的SPI指定的默认实现"dubbo"相配合。
+ *
+ *
  * DubboRegistryFactory
  *
  */
@@ -104,7 +108,9 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
                 urls.add(url.setAddress(address));
             }
         }
+        //zyh: 创建RegistryDirectory，里面有多个Registry的Invoker
         RegistryDirectory<RegistryService> directory = new RegistryDirectory<>(RegistryService.class, url.addParameter(INTERFACE_KEY, RegistryService.class.getName()).addParameterAndEncoded(REFER_KEY, url.toParameterString()));
+        //zyh: 将directory中的多个Invoker包装成一个Invoker
         Invoker<RegistryService> registryInvoker = cluster.join(directory);
         RegistryService registryService = proxyFactory.getProxy(registryInvoker);
         DubboRegistry registry = new DubboRegistry(registryInvoker, registryService);

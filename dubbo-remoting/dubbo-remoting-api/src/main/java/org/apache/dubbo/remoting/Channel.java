@@ -19,6 +19,7 @@ package org.apache.dubbo.remoting;
 import java.net.InetSocketAddress;
 
 /**
+ * zyh: 通道接口，抽象通信的载体。
  * Channel. (API/SPI, Prototype, ThreadSafe)
  *
  * @see org.apache.dubbo.remoting.Client

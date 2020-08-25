@@ -83,6 +83,7 @@ public class RedisRegistry extends FailbackRegistry {
 
     private static final int DEFAULT_REDIS_PORT = 6379;
 
+    //zyh: 默认 Redis 根节点，涉及到的是dubbo的分组配置
     private final static String DEFAULT_ROOT = "dubbo";
 
     private static final String REDIS_MASTER_NAME_KEY = "master-name";
@@ -93,14 +94,18 @@ public class RedisRegistry extends FailbackRegistry {
 
     private final String root;
 
+    //zyh: JedisPool集合，map 的key为 "ip:port"的形式
     private final Map<String, Pool<Jedis>> jedisPools = new ConcurrentHashMap<>();
 
+    //zyh: 通知器集合，key为 Root + Service的形式
+    // 例如 /dubbo/com.alibaba.dubbo.demo.DemoService
     private final ConcurrentMap<String, Notifier> notifiers = new ConcurrentHashMap<>();
 
     private final int reconnectPeriod;
 
     private final int expirePeriod;
 
+    //zyh: 是否通过监控中心，用于判断脏数据，脏数据由监控中心删除
     private volatile boolean admin = false;
 
     private boolean replicate;
@@ -295,6 +300,10 @@ public class RedisRegistry extends FailbackRegistry {
         ExecutorUtil.gracefulShutdown(expireExecutor, expirePeriod);
     }
 
+    /**
+     * zyh: 该方法是实现了父类FailbackRegistry的抽象方法，主要是实现了注册的功能，具体的逻辑是先将需要注册的服务信息保存到redis中，然后发布redis注册事件。
+     * @param url
+     */
     @Override
     public void doRegister(URL url) {
         String key = toCategoryPath(url);
@@ -326,6 +335,11 @@ public class RedisRegistry extends FailbackRegistry {
         }
     }
 
+    /**
+     * zyh: 实现了父类的抽象方法，当服务消费者或者提供者关闭时，会调用该方法来取消注册。
+     * 逻辑是，先从redis中删除服务相关记录，然后发布取消注册的事件，从而实时通知订阅者们。
+     * @param url
+     */
     @Override
     public void doUnregister(URL url) {
         String key = toCategoryPath(url);
@@ -411,6 +425,19 @@ public class RedisRegistry extends FailbackRegistry {
     public void doUnsubscribe(URL url, NotifyListener listener) {
     }
 
+    /**
+     * zyh:
+     * 该方法实现了通知的逻辑，有两个重载方法，第二个{@link #doNotify(Jedis, Collection, URL, Collection)}比这个{@link #doNotify(Jedis, String)}多了几个参数，
+     * 其实唯一的区别就是第一个重载方法是通知了所有的监听器，内部逻辑中调用了getSubscribed方法获取所有的监听器，而第二个重载方法就是对一个指定的监听器进行通知。
+     * 具体的逻辑在第二个重载的方法中，其中有以下几个需要注意的点：
+     *
+     * 1.通知的事件要和监听器匹配。
+     * 2.不同的角色会关注不同的分类，服务消费者会关注providers、configurations、routes这几个分类，而服务提供者会关注consumers分类，监控中心会关注所有分类。
+     * 3.遍历分类路径，分类路径是Root + Service + Type。
+     *
+     * @param jedis
+     * @param key
+     */
     private void doNotify(Jedis jedis, String key) {
         for (Map.Entry<URL, Set<NotifyListener>> entry : new HashMap<>(getSubscribed()).entrySet()) {
             doNotify(jedis, Collections.singletonList(key), entry.getKey(), new HashSet<>(entry.getValue()));
@@ -499,6 +526,11 @@ public class RedisRegistry extends FailbackRegistry {
         return toServicePath(url) + PATH_SEPARATOR + url.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY);
     }
 
+    /**
+     * zyh:集成JedisPubSub的内部类，负责redis publish/subscribe事件发生时，自定义回调逻辑。
+     * 这里具体实现在 {@link #onMessage(String, String)} 方法中。
+     *
+     */
     private class NotifySub extends JedisPubSub {
 
         private final Pool<Jedis> jedisPool;
@@ -550,6 +582,12 @@ public class RedisRegistry extends FailbackRegistry {
 
     }
 
+    /**
+     * zyh: 集成Thread的内部类，负责向 Redis 发起订阅逻辑。
+     * run方法中做了相关订阅的逻辑，其中根据redis的重连策略做了一些忽略连接的策略，也就是调用了isSkip方法，
+     * 订阅就是调用了jedis.psubscribe方法，它是订阅给定模式相匹配的所有频道。
+     *
+     */
     private class Notifier extends Thread {
 
         private final String service;
@@ -574,6 +612,8 @@ public class RedisRegistry extends FailbackRegistry {
 
         private boolean isSkip() {
             int skip = connectSkip.get(); // Growth of skipping times
+            //zyh: 如果忽略次数超过10次，那么取随机数，加上一个10以内的随机数
+            // 连接失败的次数越多，每一轮加大需要忽略的总次数，并且带有一定的随机性。
             if (skip >= 10) { // If the number of skipping times increases by more than 10, take the random number
                 if (connectRandom == 0) {
                     connectRandom = ThreadLocalRandom.current().nextInt(10);

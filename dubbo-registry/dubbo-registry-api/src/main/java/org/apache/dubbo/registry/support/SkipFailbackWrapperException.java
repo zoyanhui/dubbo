@@ -17,6 +17,8 @@
 package org.apache.dubbo.registry.support;
 
 /**
+ * zyh:dubbo自定义的异常，用来跳过失败重试（skip failback)
+ *
  * Wrapper Exception, it is used to indicate that {@link FailbackRegistry} skips Failback.
  * <p>
  * NOTE: Expect to find other more conventional ways of instruction.

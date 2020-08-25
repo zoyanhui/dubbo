@@ -25,6 +25,8 @@ import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 import java.util.Collection;
 
 /**
+ * zyh:自动激活的StatusChecker,用来检测所有注册中心对象的状态
+ *
  * RegistryStatusChecker
  *
  */

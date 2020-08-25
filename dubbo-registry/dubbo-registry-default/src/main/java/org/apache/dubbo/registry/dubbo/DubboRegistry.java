@@ -39,6 +39,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import static org.apache.dubbo.registry.Constants.REGISTRY_RECONNECT_PERIOD_KEY;
 
 /**
+ * zyh:
+ * 重连逻辑： 这里的重连是建立了一个计时器，并且会定期检查连接是否可用，如果不可用，就无限重连。
+ *
  * DubboRegistry
  */
 public class DubboRegistry extends FailbackRegistry {
@@ -55,11 +58,11 @@ public class DubboRegistry extends FailbackRegistry {
     private final ScheduledFuture<?> reconnectFuture;
 
     // The lock for client acquisition process, lock the creation process of the client instance to prevent repeated clients
-    private final ReentrantLock clientLock = new ReentrantLock();
+    private final ReentrantLock clientLock = new ReentrantLock(); //zyh: 保证唯一可用的 registryInvoker，使用在double check的锁
 
     private final Invoker<RegistryService> registryInvoker;
 
-    private final RegistryService registryService;
+    private final RegistryService registryService; //zyh: 委托的注册中心实现
 
     /**
      * The time in milliseconds the reconnectTimer will wait
@@ -72,7 +75,7 @@ public class DubboRegistry extends FailbackRegistry {
         this.registryService = registryService;
         // Start reconnection timer
         this.reconnectPeriod = registryInvoker.getUrl().getParameter(REGISTRY_RECONNECT_PERIOD_KEY, RECONNECT_PERIOD_DEFAULT);
-        reconnectFuture = reconnectTimer.scheduleWithFixedDelay(() -> {
+        reconnectFuture = reconnectTimer.scheduleWithFixedDelay(() -> { //zyh:定时连接检测和重连
             // Check and connect to the registry
             try {
                 connect();
@@ -97,7 +100,7 @@ public class DubboRegistry extends FailbackRegistry {
                 if (isAvailable()) {
                     return;
                 }
-                recover();
+                recover(); //zyh: 连接和重连，由父类的recover方法实现
             } finally {
                 clientLock.unlock();
             }
@@ -133,6 +136,10 @@ public class DubboRegistry extends FailbackRegistry {
         ExecutorUtil.gracefulShutdown(reconnectTimer, reconnectPeriod);
     }
 
+    /**
+     * zyh: 实际的register实现，委托给 registryService
+     * @param url
+     */
     @Override
     public void doRegister(URL url) {
         registryService.register(url);

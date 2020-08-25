@@ -31,7 +31,9 @@ public interface Codec2 {
     @Adaptive({Constants.CODEC_KEY})
     Object decode(Channel channel, ChannelBuffer buffer) throws IOException;
 
-
+    /**
+     * 用来处理TCP拆包、粘包场景，返回的结果
+     */
     enum DecodeResult {
         NEED_MORE_INPUT, SKIP_SOME_INPUT
     }

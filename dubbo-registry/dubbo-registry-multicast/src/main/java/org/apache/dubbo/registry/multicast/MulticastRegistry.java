@@ -115,6 +115,7 @@ public class MulticastRegistry extends FailbackRegistry {
                             if (i > 0) {
                                 msg = msg.substring(0, i).trim();
                             }
+                            //zyh: 通过循环接受消息，对消息类型进行相应操作
                             MulticastRegistry.this.receive(msg, (InetSocketAddress) recv.getSocketAddress());
                             Arrays.fill(buf, (byte) 0);
                         } catch (Throwable e) {
@@ -131,7 +132,7 @@ public class MulticastRegistry extends FailbackRegistry {
             throw new IllegalStateException(e.getMessage(), e);
         }
         this.cleanPeriod = url.getParameter(SESSION_TIMEOUT_KEY, DEFAULT_SESSION_TIMEOUT);
-        if (url.getParameter("clean", true)) {
+        if (url.getParameter("clean", true)) { //zyh: clean为true时，启动cleaner线程延迟清理过期provider
             this.cleanFuture = cleanExecutor.scheduleWithFixedDelay(new Runnable() {
                 @Override
                 public void run() {
@@ -178,10 +179,17 @@ public class MulticastRegistry extends FailbackRegistry {
         }
     }
 
+    /**
+     * zyh:
+     * @param url
+     * @return
+     */
     private boolean isExpired(URL url) {
+        //zyh: 如果为非动态管理模式或者协议是consumer、route或者override，则没有过期
         if (!url.getParameter(DYNAMIC_KEY, true) || url.getPort() <= 0 || CONSUMER_PROTOCOL.equals(url.getProtocol()) || ROUTE_PROTOCOL.equals(url.getProtocol()) || OVERRIDE_PROTOCOL.equals(url.getProtocol())) {
             return false;
         }
+        //zyh: 通过两次socket尝试，判断是否过期
         try (Socket socket = new Socket(url.getHost(), url.getPort())) {
         } catch (Throwable e) {
             try {
@@ -304,6 +312,7 @@ public class MulticastRegistry extends FailbackRegistry {
         } catch (Throwable t) {
             logger.warn(t.getMessage(), t);
         }
+        //zyh: 从多播地址中，移除当前地址
         try {
             multicastSocket.leaveGroup(multicastAddress);
             multicastSocket.close();
@@ -392,6 +401,11 @@ public class MulticastRegistry extends FailbackRegistry {
         received.remove(url);
     }
 
+    /**
+     * zyh: 返回注册的服务url列表
+     * @param url Query condition, is not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
+     * @return
+     */
     @Override
     public List<URL> lookup(URL url) {
         List<URL> urls = new ArrayList<>();
