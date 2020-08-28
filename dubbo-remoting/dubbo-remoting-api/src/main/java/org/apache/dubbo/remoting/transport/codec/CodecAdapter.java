@@ -27,6 +27,9 @@ import org.apache.dubbo.remoting.buffer.ChannelBuffer;
 
 import java.io.IOException;
 
+/**
+ * zyh: 适配器模式，Codec适配Codec2
+ */
 public class CodecAdapter implements Codec2 {
 
     private Codec codec;

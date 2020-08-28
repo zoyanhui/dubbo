@@ -23,6 +23,7 @@ import org.apache.dubbo.remoting.RemotingException;
 import org.apache.dubbo.remoting.utils.PayloadDropper;
 
 /**
+ * zyh: 简单的实现了发送数据时通道是否关闭的判断，具体的逻辑由子类实现
  * AbstractChannel
  */
 public abstract class AbstractChannel extends AbstractPeer implements Channel {

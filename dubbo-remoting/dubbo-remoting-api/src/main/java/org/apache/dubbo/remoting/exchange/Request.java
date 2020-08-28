@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 
 /**
+ * zyh: Exchange信息交换层的请求类
  * Request.
  */
 public class Request {

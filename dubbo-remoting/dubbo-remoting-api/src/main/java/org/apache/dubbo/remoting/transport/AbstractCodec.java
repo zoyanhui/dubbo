@@ -31,6 +31,7 @@ import org.apache.dubbo.remoting.Constants;
 import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
 
 /**
+ * zyh: 实现Codec2接口，提供一些编解码的公共逻辑
  * AbstractCodec
  */
 public abstract class AbstractCodec implements Codec2 {

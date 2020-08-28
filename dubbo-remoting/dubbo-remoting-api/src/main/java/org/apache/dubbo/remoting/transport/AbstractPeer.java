@@ -28,10 +28,13 @@ import org.apache.dubbo.remoting.RemotingException;
  */
 public abstract class AbstractPeer implements Endpoint, ChannelHandler {
 
+    //zyh: 装饰模式，AbstractPeer包含ChannelHandler field，同时实现ChannelHandler接口
+    //     从而对handler进行装饰，实现灵活功能增强
     private final ChannelHandler handler;
 
     private volatile URL url;
 
+    //zyh: 区分关闭中和关闭完成状态，对通道关闭状态实现更准确的处理
     // closing closed means the process is being closed and close is finished
     private volatile boolean closing;
 
@@ -48,8 +51,16 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
         this.handler = handler;
     }
 
+    /**
+     *
+     * @param message
+     * @throws RemotingException
+     */
     @Override
     public void send(Object message) throws RemotingException {
+        //zyh: URL中sent配置项：
+        // sent值为true，等待消息发出，消息发送失败将抛出异常。
+        // sent值为false，不等待消息发出，将消息放入 IO 队列，即刻返回。
         send(message, url.getParameter(Constants.SENT_KEY, false));
     }
 

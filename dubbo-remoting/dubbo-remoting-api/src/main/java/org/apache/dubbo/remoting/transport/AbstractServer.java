@@ -41,6 +41,10 @@ import static org.apache.dubbo.remoting.Constants.DEFAULT_IDLE_TIMEOUT;
 import static org.apache.dubbo.remoting.Constants.IDLE_TIMEOUT_KEY;
 
 /**
+ * zyh:
+ * 在AbstractEndpoint的基础上，增加Server端的行为:
+ * 最大可连接的客户端数量{@link #accepts}、空闲超时时间{@link #idleTimeout}以及线程池{@link #executor}的两个配置参数.
+ *
  * AbstractServer
  */
 public abstract class AbstractServer extends AbstractEndpoint implements RemotingServer {

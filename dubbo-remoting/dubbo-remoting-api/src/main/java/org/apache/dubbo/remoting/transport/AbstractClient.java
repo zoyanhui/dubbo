@@ -40,6 +40,9 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_CLIENT_T
 import static org.apache.dubbo.common.constants.CommonConstants.THREADPOOL_KEY;
 
 /**
+ * zyh:
+ * 在AbstractEndpoint的基础上，增加Client的行为。
+ * 客户端的公用重连逻辑，抽象客户端打开和关闭，连接和断开服务器，以及获取通道的方法，让子类自定义实现
  * AbstractClient
  */
 public abstract class AbstractClient extends AbstractEndpoint implements Client {

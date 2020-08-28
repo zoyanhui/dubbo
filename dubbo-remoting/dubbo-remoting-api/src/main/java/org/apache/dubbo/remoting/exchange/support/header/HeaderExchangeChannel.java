@@ -37,6 +37,9 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_TIMEOUT;
 import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 
 /**
+ * zyh: 基于协议头的信息交换通道.
+ * 实现为 内部{@link #channel}的装饰器，方法实现委托channel的方法实现。
+ * 同时HeaderExchangeChannel又是Channel的属性，{@link #CHANNEL_KEY}
  * ExchangeReceiver
  */
 final class HeaderExchangeChannel implements ExchangeChannel {
@@ -87,6 +90,12 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         send(message, false);
     }
 
+    /**
+     * zyh: 在channel的send方法上，加上了request和response，起装饰器作用
+     * @param message
+     * @param sent    already sent to socket?
+     * @throws RemotingException
+     */
     @Override
     public void send(Object message, boolean sent) throws RemotingException {
         if (closed) {
@@ -99,7 +108,7 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         } else {
             Request request = new Request();
             request.setVersion(Version.getProtocolVersion());
-            request.setTwoWay(false);
+            request.setTwoWay(false); //zyh:不需要响应的请求
             request.setData(message);
             channel.send(request, sent);
         }
@@ -120,6 +129,14 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         return request(request, channel.getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT), executor);
     }
 
+    /**
+     * zyh: 使用Request封装请求内容发送
+     * @param request
+     * @param timeout
+     * @param executor
+     * @return
+     * @throws RemotingException
+     */
     @Override
     public CompletableFuture<Object> request(Object request, int timeout, ExecutorService executor) throws RemotingException {
         if (closed) {

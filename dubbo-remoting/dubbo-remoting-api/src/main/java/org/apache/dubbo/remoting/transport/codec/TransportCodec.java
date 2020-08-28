@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * zyh: 使用Serialization进行序列化和反序列化，完成传输编解码
  * Subclasses {@link org.apache.dubbo.remoting.telnet.codec.TelnetCodec} and {@link org.apache.dubbo.remoting.exchange.codec.ExchangeCodec}
  * both override all the methods declared in this class.
  */
