@@ -41,6 +41,10 @@ import static org.apache.dubbo.remoting.utils.UrlUtils.getHeartbeat;
 import static org.apache.dubbo.remoting.utils.UrlUtils.getIdleTimeout;
 
 /**
+ * zyh: 基于协议头的信息交互客户端类，同样采用Client和ExchangeChannel的适配器方式实现
+ * ExchangeClient的基础上，增加心跳重连的逻辑。
+ * 心跳为了网络异常的时候，服务端TCP链接能够快速断开，客户端能够快速进行重连
+ *
  * DefaultMessageClient
  */
 public class HeaderExchangeClient implements ExchangeClient {

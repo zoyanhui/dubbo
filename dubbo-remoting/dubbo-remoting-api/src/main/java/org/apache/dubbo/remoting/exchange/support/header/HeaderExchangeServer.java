@@ -48,6 +48,8 @@ import static org.apache.dubbo.remoting.utils.UrlUtils.getHeartbeat;
 import static org.apache.dubbo.remoting.utils.UrlUtils.getIdleTimeout;
 
 /**
+ * zyh: 包含idle检测（心跳检测处理）
+ *
  * ExchangeServerImpl
  */
 public class HeaderExchangeServer implements ExchangeServer {
@@ -126,6 +128,10 @@ public class HeaderExchangeServer implements ExchangeServer {
         server.startClose();
     }
 
+    /**
+     * zyh: 发送readonly事件。
+     * 在server关闭时，让客户端不再“写”新的请求
+     */
     private void sendChannelReadOnlyEvent() {
         Request request = new Request();
         request.setEvent(READONLY_EVENT);

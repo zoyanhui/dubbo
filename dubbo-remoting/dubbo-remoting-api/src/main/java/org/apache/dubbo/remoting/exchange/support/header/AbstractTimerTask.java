@@ -30,8 +30,10 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractTimerTask implements TimerTask {
 
+    //zyh: 通道管理
     private final ChannelProvider channelProvider;
 
+    //zyh: timer tick， milliseconds
     private final Long tick;
 
     protected volatile boolean cancel = false;

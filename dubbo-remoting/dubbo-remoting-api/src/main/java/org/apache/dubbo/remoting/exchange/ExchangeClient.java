@@ -19,6 +19,10 @@ package org.apache.dubbo.remoting.exchange;
 import org.apache.dubbo.remoting.Client;
 
 /**
+ * zyh: 信息交互的Client接口。有基于协议头的实现{@link org.apache.dubbo.remoting.exchange.support.header.HeaderExchangeClient}，
+ * 用于非dubbo rpc的远程通信。
+ * 另外也有 dubbo-rpc中的实现。
+ *
  * ExchangeClient. (API/SPI, Prototype, ThreadSafe)
  *
  *

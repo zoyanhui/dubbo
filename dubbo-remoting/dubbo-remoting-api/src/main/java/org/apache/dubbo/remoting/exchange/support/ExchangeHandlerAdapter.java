@@ -24,6 +24,8 @@ import org.apache.dubbo.remoting.telnet.support.TelnetHandlerAdapter;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * zyh: 空方法（直接返回null)实现 {@link ExchangeHandler},用作适配ExchangeHandler
+ *
  * ExchangeHandlerAdapter
  */
 public abstract class ExchangeHandlerAdapter extends TelnetHandlerAdapter implements ExchangeHandler {

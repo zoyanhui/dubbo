@@ -23,6 +23,8 @@ import org.apache.dubbo.remoting.telnet.TelnetHandler;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * zyh: 信息交换的处理接口，继承了 {@link ChannelHandler} 和 {@link TelnetHandler}
+ *
  * ExchangeHandler. (API, Prototype, ThreadSafe)
  */
 public interface ExchangeHandler extends ChannelHandler, TelnetHandler {

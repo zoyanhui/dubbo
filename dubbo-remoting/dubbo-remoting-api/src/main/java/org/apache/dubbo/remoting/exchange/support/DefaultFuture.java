@@ -163,6 +163,12 @@ public class DefaultFuture extends CompletableFuture<Object> {
         received(channel, response, false);
     }
 
+    /**
+     * zyh: 该方法是接收响应，也就是某个请求得到了响应，那么代表这次请求任务完成，所有需要把future从集合中移除。具体的接收响应结果在 {@link #doReceived} 方法中实现。
+     * @param channel
+     * @param response
+     * @param timeout
+     */
     public static void received(Channel channel, Response response, boolean timeout) {
         try {
             DefaultFuture future = FUTURES.remove(response.getId());

@@ -42,6 +42,21 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * 该类继承了TelnetCodec，是信息交换编解码器。在本文的开头，我就写到，dubbo将一条消息分成了协议头和协议体，用来解决粘包拆包问题，但是头跟体在编解码上有区别，我们先来看看dubbo 的协议头的配置：
+ * pic: /pics/dubbo_protocol_header.png
+ * 详见： http://dubbo.apache.org/zh-cn/docs/dev/implementation.html
+ *
+ * 0-7位和8-15位：Magic High和Magic Low，类似java字节码文件里的魔数，用来判断是不是dubbo协议的数据包，就是一个固定的数字
+ * 16位：Req/Res：请求还是响应标识。
+ * 17位：2way：单向还是双向
+ * 18位：Event：是否是事件
+ * 19-23位：Serialization 编号
+ * 24-31位：status状态
+ * 32-95位：id编号
+ * 96-127位：body数据
+ * 128-…位：上图表格内的数据
+ *
+ *
  * ExchangeCodec.
  */
 public class ExchangeCodec extends TelnetCodec {
