@@ -24,10 +24,12 @@ import java.nio.ByteBuffer;
 
 public abstract class AbstractChannelBuffer implements ChannelBuffer {
 
+    //zyh: readIndex和writerIndex分别是读取和写入的位置
     private int readerIndex;
 
     private int writerIndex;
 
+    //zyh: markedReaderIndex 和 markedWriterIndex 分别用来记录读取和写入的位置,用来与reset配合
     private int markedReaderIndex;
 
     private int markedWriterIndex;

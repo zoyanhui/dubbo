@@ -20,6 +20,9 @@ package org.apache.dubbo.remoting.buffer;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * zyh: 采用 {@link InputStream} 接口方式，流式的操作通道缓冲区
+ */
 public class ChannelBufferInputStream extends InputStream {
 
     private final ChannelBuffer buffer;

@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+/**
+ * zyh: 使用 {@link ByteBuffer} 实现堆外的通道缓冲区
+ */
 public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
     private final ByteBuffer buffer;

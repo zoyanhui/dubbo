@@ -22,6 +22,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+/**
+ * zyh: 动态通道缓存区类，从 ChannelBufferFactory {@link #factory} 生成缓冲区， 默认使用的是 {@link HeapChannelBufferFactory}.
+ * 通过装饰模式，buffer的操作由属性 {@link #buffer} 完成
+ */
 public class DynamicChannelBuffer extends AbstractChannelBuffer {
 
     private final ChannelBufferFactory factory;

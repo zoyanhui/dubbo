@@ -19,6 +19,9 @@ package org.apache.dubbo.remoting.buffer;
 
 import java.nio.ByteBuffer;
 
+/**
+ * zyh: 使用了 {@link ChannelBuffers} 完成 ChannelBuffer 的创建
+ */
 public class HeapChannelBufferFactory implements ChannelBufferFactory {
 
     private static final HeapChannelBufferFactory INSTANCE = new HeapChannelBufferFactory();

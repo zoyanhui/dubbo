@@ -25,6 +25,9 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 
+/**
+ * zyh: 通过固定大小的byte[] 来实现通道缓冲区
+ */
 public class HeapChannelBuffer extends AbstractChannelBuffer {
 
     /**

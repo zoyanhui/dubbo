@@ -19,6 +19,9 @@ package org.apache.dubbo.remoting.buffer;
 
 import java.nio.ByteBuffer;
 
+/**
+ * zyh: 缓冲区的工具类。 提供创建、比较 ChannelBuffer 等公用方法。
+ */
 public final class ChannelBuffers {
 
     public static final ChannelBuffer EMPTY_BUFFER = new HeapChannelBuffer(0);

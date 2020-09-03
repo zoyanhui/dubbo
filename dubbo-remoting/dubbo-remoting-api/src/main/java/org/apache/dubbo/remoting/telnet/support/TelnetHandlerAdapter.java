@@ -28,6 +28,12 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerAdapter;
 import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
 import static org.apache.dubbo.remoting.Constants.TELNET;
 
+/**
+ * zyh:
+ * 该类继承了ChannelHandlerAdapter，实现了TelnetHandler接口，是TelnetHandler的适配器类，
+ * 负责在接收到HeaderExchangeHandler发来的telnet命令后分发给对应的TelnetHandler实现类去实现，并且返回命令结果。
+ *
+ */
 public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements TelnetHandler {
 
     private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class);
@@ -54,6 +60,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
         }
         if (command.length() > 0) {
             if (extensionLoader.hasExtension(command)) {
+                //zyh: 根据对应的命名，采用对应的扩展实现来执行
                 if (commandEnabled(channel.getUrl(), command)) {
                     try {
                         String result = extensionLoader.getExtension(command).telnet(channel, message);

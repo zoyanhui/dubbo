@@ -92,8 +92,10 @@ public class ExchangeCodec extends TelnetCodec {
     @Override
     public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
         int readable = buffer.readableBytes();
+        //zyh: 读取前16字节的协议头数据，如果数据不满16字节，则读取全部
         byte[] header = new byte[Math.min(readable, HEADER_LENGTH)];
         buffer.readBytes(header);
+        // 解码
         return decode(channel, buffer, readable, header);
     }
 
@@ -104,6 +106,7 @@ public class ExchangeCodec extends TelnetCodec {
                 || readable > 1 && header[1] != MAGIC_LOW) {
             int length = header.length;
             if (header.length < readable) {
+                //
                 header = Bytes.copyOf(header, readable);
                 buffer.readBytes(header, length, readable - length);
             }
@@ -118,6 +121,7 @@ public class ExchangeCodec extends TelnetCodec {
         }
         // check length.
         if (readable < HEADER_LENGTH) {
+            //zyh: 长度不够，需要更多输入，解决TCP拆包现象
             return DecodeResult.NEED_MORE_INPUT;
         }
 
@@ -127,6 +131,7 @@ public class ExchangeCodec extends TelnetCodec {
 
         int tt = len + HEADER_LENGTH;
         if (readable < tt) {
+            //zyh: 长度不够，需要更多输入，解决TCP拆包现象
             return DecodeResult.NEED_MORE_INPUT;
         }
 
@@ -230,6 +235,7 @@ public class ExchangeCodec extends TelnetCodec {
         Bytes.short2bytes(MAGIC, header);
 
         // set request and serialization flag.
+        //zyh: 16-23位为serialization编号，用到或运算10000000|serialization编号，例如serialization编号为11111，则为00011111
         header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
 
         if (req.isTwoWay()) {
@@ -240,6 +246,7 @@ public class ExchangeCodec extends TelnetCodec {
         }
 
         // set request id.
+        //zyh: 设置32-95位请求id
         Bytes.long2bytes(req.getId(), header, 4);
 
         // encode request data.
@@ -248,8 +255,10 @@ public class ExchangeCodec extends TelnetCodec {
         ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
         ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
         if (req.isEvent()) {
+            //zyh: 处理事件请求编码
             encodeEventData(channel, out, req.getData());
         } else {
+            //zyh: 处理普通请求编码
             encodeRequestData(channel, out, req.getData(), req.getVersion());
         }
         out.flushBuffer();
@@ -318,6 +327,7 @@ public class ExchangeCodec extends TelnetCodec {
             // clear buffer
             buffer.writerIndex(savedWriteIndex);
             // send error message to Consumer, otherwise, Consumer will wait till timeout.
+            //zyh: 如果在写入数据失败，则返回响应格式错误的返回码
             if (!res.isEvent() && res.getStatus() != Response.BAD_RESPONSE) {
                 Response r = new Response(res.getId(), res.getVersion());
                 r.setStatus(Response.BAD_RESPONSE);

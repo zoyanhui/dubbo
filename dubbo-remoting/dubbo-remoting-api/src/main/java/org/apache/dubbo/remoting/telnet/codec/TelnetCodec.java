@@ -37,6 +37,8 @@ import static org.apache.dubbo.remoting.Constants.CHARSET_KEY;
 import static org.apache.dubbo.remoting.Constants.DEFAULT_CHARSET;
 
 /**
+ * zyh: telnet的解码类
+ *
  * TelnetCodec
  */
 public class TelnetCodec extends TransportCodec {
